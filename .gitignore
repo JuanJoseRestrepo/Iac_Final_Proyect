@@ -1,0 +1,7 @@
+# Ignore Terraform temporary files and directories
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Ignore Terraform provider plugins
+.terraform/providers/
