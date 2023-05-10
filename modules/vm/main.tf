@@ -109,8 +109,8 @@ resource "azurerm_virtual_machine" "vm_devops" {
       "sudo chmod +x /usr/local/bin/docker-compose",
       "sudo sysctl -w vm.max_map_count=262144",
       "sudo systemctl restart docker",
-      "git clone https://github.com/Marshmillo/jenkins-sonar-nexus.git",
-      "sudo docker-compose -f /home/adminuser/jenkins-sonar-nexus/docker-compose.yml up -d",
+      "git clone https://github.com/camilovivas/dockerCompose.git",
+      "sudo docker-compose -f /home/adminuser/dockerCompose/docker_compose.yml up -d",
       "sudo docker exec -it jenkins jenkins-plugin-cli --plugin-file /plugins.txt",
       "sudo docker restart jenkins"
     ]
