@@ -103,6 +103,13 @@ request_routing_rule {
 
 }
 
+resource "azurerm_role_assignment" "ra3" {
+  scope                = azurerm_application_gateway.appgw.id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_user_assigned_identity.user.principal_id
+  depends_on           = [azurerm_user_assigned_identity.user, azurerm_application_gateway.appgw]
+}
+
 resource "azurerm_container_registry" "az_cr" {
   name                = "cr15282813281328132813281328132813"
   resource_group_name = azurerm_resource_group.resources_az.name
