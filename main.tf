@@ -132,12 +132,3 @@ module "vm" {
   user =  var.user
   password = var.password
 }
-
-module "vm2" {
-  source = "./modules/vm2"
-  resource_group_name       = azurerm_resource_group.resources_az.name
-  location                  = azurerm_resource_group.resources_az.location
-  subnet_id = azurerm_subnet.vm_subnet.id
-  user =  var.user
-  password = var.password
-}

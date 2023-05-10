@@ -8,10 +8,33 @@ output "client_certificate" {
   sensitive = true
 }
 
+output "cluster_ca_certificate" {
+  value = module.cluster.cluster_ca_certificate
+  sensitive = true
+}
+
+output "cluster_username" {
+  value = module.cluster.cluster_username
+  sensitive = true
+}
+
+output "cluster_password" {
+  value = module.cluster.cluster_password
+  sensitive = true
+}
+
 output ip_nic_vm {
     value = module.vm.ip_nic_vm
 }
 
-output ip_nic_vm2 {
-    value = module.vm2.ip_nic_vm2
+output "identity_resource_id" {
+  value = azurerm_user_assigned_identity.user.id
+}
+
+output "identity_client_id" {
+  value = azurerm_user_assigned_identity.user.client_id
+}
+
+output "application_ip_address" {
+  value = azurerm_public_ip.example.ip_address
 }
