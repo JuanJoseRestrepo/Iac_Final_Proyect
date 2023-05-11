@@ -34,7 +34,7 @@ appgw:
 armAuth:
     type: aadPodIdentity
     identityResourceID: "/subscriptions/ebb60728-9ba1-4adb-acf8-7e0f8b221b62/resourceGroups/resources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/user"
-    identityClientID:  "1c2e5379-5fac-4034-9232-eb4ad8a2fcb6"
+    identityClientID: "23aef3d6-9abc-4098-b5ad-4592b2b50c5f"
 
 ## Alternatively you can use Service Principal credentials
 # armAuth:
@@ -44,4 +44,4 @@ armAuth:
 ################################################################################
 # Specify if the cluster is RBAC enabled or not
 rbac:
-    enabled: false # true/false
+    enabled: true # true/false

@@ -93,19 +93,18 @@ request_routing_rule {
   priority                   = 1 # Add this line to define the priority
 }
 
-
-  identity {
-    type = "UserAssigned"
-    identity_ids = [
-      azurerm_user_assigned_identity.user.id
-    ]
-  }
-
 }
 
 resource "azurerm_role_assignment" "ra3" {
   scope                = azurerm_application_gateway.appgw.id
   role_definition_name = "Contributor"
+  principal_id         = azurerm_user_assigned_identity.user.principal_id
+  depends_on           = [azurerm_user_assigned_identity.user, azurerm_application_gateway.appgw]
+}
+
+resource "azurerm_role_assignment" "ra4" {
+  scope                = azurerm_resource_group.resources_az.id
+  role_definition_name = "Reader"
   principal_id         = azurerm_user_assigned_identity.user.principal_id
   depends_on           = [azurerm_user_assigned_identity.user, azurerm_application_gateway.appgw]
 }
@@ -129,6 +128,8 @@ module "cluster" {
   user_assigned_identity_id = azurerm_user_assigned_identity.user.id
   client_id     = var.client_id
   client_secret = var.client_secret
+  aks_service_principal_app_id = var.aks_service_principal_app_id
+  aks_service_principal_client_secret = var.aks_service_principal_client_secret
 }
 
 module "vm" {
