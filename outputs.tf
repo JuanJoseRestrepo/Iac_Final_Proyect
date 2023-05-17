@@ -34,7 +34,3 @@ output "identity_resource_id" {
 output "identity_client_id" {
   value = azurerm_user_assigned_identity.user.client_id
 }
-
-output "application_ip_address" {
-  value = azurerm_public_ip.example.ip_address
-}

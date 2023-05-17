@@ -13,9 +13,6 @@ variable "aks_dns_prefix" {
 variable "subnet_id" {
     type = string
 }
-variable "app_gateway_id" {
-    type = string
-}
 variable "user_assigned_identity_id" {
     type = string
 }

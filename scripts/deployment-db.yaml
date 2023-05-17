@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: icesi-health
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-couchdb
+  namespace: icesi-health
+  labels:
+    app: my-couchdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-couchdb
+  template:
+    metadata:
+      labels:
+        app: my-couchdb
+    spec:
+      containers:
+      - name: my-couchdb
+        image: cr15282813281328132813281328132813.azurecr.io/my-couchdb
+        ports:
+        - containerPort: 5984
+        
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-couchdb
+  namespace: icesi-health
+spec:
+  selector:
+    app: my-couchdb
+  ports:
+    - protocol: TCP
+      port: 5984
+      targetPort: 5984
+  type: ClusterIP

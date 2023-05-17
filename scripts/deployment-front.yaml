@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icesi-frontend
+  namespace: icesi-health
+  labels:
+    app: icesi-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icesi-frontend
+  template:
+    metadata:
+      labels:
+        app: icesi-frontend
+    spec:
+      containers:
+      - name: icesi-frontend
+        image: cr15282813281328132813281328132813.azurecr.io/icesi-frontend
+        ports:
+        - containerPort: 8080
+        env:
+          - name: API_URL
+            value: "http://$(ICESI_HEALTH_BACKEND_SERVICE_HOST):8089"
+            
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-svc-front
+  namespace: icesi-health
+spec:
+  selector:
+    app: icesi-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+

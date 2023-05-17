@@ -1,47 +1,66 @@
-# This file contains the essential configs for the ingress controller helm chart
-
-# Verbosity level of the App Gateway Ingress Controller
-verbosityLevel: 3
-
-################################################################################
-# Specify which application gateway the ingress controller will manage
-#
-appgw:
-    subscriptionId: "ebb60728-9ba1-4adb-acf8-7e0f8b221b62"
-    resourceGroup: "resources"
-    name: "appgw-azure"
-    usePrivateIP: false
-
-    # Setting appgw.shared to "true" will create an AzureIngressProhibitedTarget CRD.
-    # This prohibits AGIC from applying config for any host/path.
-    # Use "kubectl get AzureIngressProhibitedTargets" to view and change this.
-    shared: false
-
-################################################################################
-# Specify which kubernetes namespace the ingress controller will watch
-# Default value is "default"
-# Leaving this variable out or setting it to blank or empty string would
-# result in Ingress Controller observing all acessible namespaces.
-#
-# kubernetes:
-#   watchNamespace: <namespace>
-
-################################################################################
-# Specify the authentication with Azure Resource Manager
-#
-# Two authentication methods are available:
-# - Option 1: AAD-Pod-Identity (https://github.com/Azure/aad-pod-identity)
-armAuth:
-    type: aadPodIdentity
-    identityResourceID: "/subscriptions/ebb60728-9ba1-4adb-acf8-7e0f8b221b62/resourceGroups/resources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/user"
-    identityClientID: "23aef3d6-9abc-4098-b5ad-4592b2b50c5f"
-
-## Alternatively you can use Service Principal credentials
-# armAuth:
-#    type: servicePrincipal
-#    secretJSON: <<Generate this value with: "az ad sp create-for-rbac --subscription <subscription-uuid> --sdk-auth | base64 -w0" >>
-
-################################################################################
-# Specify if the cluster is RBAC enabled or not
-rbac:
-    enabled: true # true/false
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "kubernetesp"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-azure-config
+  namespace: "kubernetesp"
+data:
+  appgw.subscriptionId: "ebb60728-9ba1-4adb-acf8-7e0f8b221b62"
+  appgw.resourceGroup: "resources"
+  appgw.name: "appgw-azure"
+  armAuth.type: servicePrincipal
+  armAuth.clientId: "43a24b93-7e1b-43bf-a8e0-03f2814ae9a9"
+  armAuth.clientSecret: "uzj8Q~ZBXzVljbZEHfb93Qjeiz_SJlNg8_sn5cnp"
+  armAuth.tenantId: "e994072b-523e-4bfe-86e2-442c5e10b244"
+  armAuth.resourceId: "/subscriptions/ebb60728-9ba1-4adb-acf8-7e0f8b221b62/resourceGroups/resources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/user"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingress-azure
+  namespace: "kubernetesp"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingress-azure
+  template:
+    metadata:
+      labels:
+        app: ingress-azure
+    spec:
+      containers:
+      - name: ingress-azure
+        image: mcr.microsoft.com/azure-application-gateway/kubernetes-ingress:1.4.0
+        imagePullPolicy: Always
+        env:
+        - name: AZURE_AUTH_LOCATION
+          value: /etc/azure/auth/azure.json
+        - name: APPGW_INGRESS_CONTROLLER_CONF
+          value: /etc/azure/appgw-agic-config.yaml
+        volumeMounts:
+        - mountPath: /etc/azure/auth
+          name: azure-auth
+        - mountPath: /etc/azure/appgw-agic-config.yaml
+          name: ingress-azure-config
+          subPath: ingress-azure-config.yaml
+      volumes:
+      - name: azure-auth
+        secret:
+          secretName: azure-auth-secret
+      - name: ingress-azure-config
+        configMap:
+          name: ingress-azure-config
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: azure-auth-secret
+  namespace: "kubernetesp"
+type: Opaque
+data:
+  azure.json: ew0KICAgICJ0ZW5hbnRJZCI6ICJlOTk0MDcyYi01MjNlLTRiZmUtODZlMi00NDJjNWUxMGIyNDQiLA0KICAgICJzdWJzY3JpcHRpb25JZCI6ICJlYmI2MDcyOC05YmExLTRhZGItYWNmOC03ZTBmOGIyMjFiNjIiLA0KICAgICJhYWRDbGllbnRJZCI6ICI0M2EyNGI5My03ZTFiLTQzYmYtYThlMC0wM2YyODE0YWU5YTkiLA0KICAgICJhYWRDbGllbnRTZWNyZXQiOiAidXpqOFF+WkJYelZsamJaRUhmYjkzUWplaXpfU0psTmc4X3NuNWNucCIsDQogICAgInJlc291cmNlR3JvdXAiOiAicmVzb3VyY2VzIiwNCiAgICAibG9jYXRpb24iOiAiRWFzdCBVUyINCiAgfQ==
