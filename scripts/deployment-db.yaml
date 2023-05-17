@@ -25,6 +25,11 @@ spec:
         image: cr15282813281328132813281328132813.azurecr.io/my-couchdb
         ports:
         - containerPort: 5984
+        env:
+        - name: COUCHDB_USER
+          value: "admin"
+        - name: COUCHDB_PASSWORD
+          value: "icesi"
         
 
 ---

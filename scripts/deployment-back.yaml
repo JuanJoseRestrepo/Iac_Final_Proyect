@@ -22,7 +22,7 @@ spec:
         - containerPort: 8089
         env:
           - name: DATABASE_URL
-            value: "http://admin:icesi@$(MI_COUCHDB_SERVICE_HOST):5984"
+            value: "http://admin:icesi@$(MY_COUCHDB_SERVICE_HOST):5984"
             
 ---
 
