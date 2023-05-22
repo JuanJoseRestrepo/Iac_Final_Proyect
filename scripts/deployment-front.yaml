@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: icesi-frontend
-        image: cr15282813281328132813281328132813.azurecr.io/icesi-frontend
+        image: cr152828132813.azurecr.io/icesi-frontend
         ports:
         - containerPort: 8080
         env:

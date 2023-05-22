@@ -31,7 +31,7 @@ resource_group_name = azurerm_resource_group.resources_az.name
 }
 
 resource "azurerm_container_registry" "az_cr" {
-  name                = "cr15282813281328132813281328132813"
+  name                = "cr152828132813"
   resource_group_name = azurerm_resource_group.resources_az.name
   location            = azurerm_resource_group.resources_az.location
   sku                 = "Basic"
